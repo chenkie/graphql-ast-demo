@@ -45,6 +45,19 @@ const makeScopedQuery = (args, clientId) => {
   return Object.assign({}, args, { clientId });
 };
 
+// more to do here to handle all cases
+// see https://github.com/stems/graphql-depth-limit for a proper implementation
+const getSelectionDepth = (node, currentDepth = 1) => {
+  return node.map(n => {
+    if (!n.selectionSet) {
+      return currentDepth;
+    }
+    return Math.max(
+      ...getSelectionDepth(n.selectionSet.selections, currentDepth + 1)
+    );
+  });
+};
+
 const typeDefs = gql`
   type Book {
     title: String
@@ -70,11 +83,22 @@ const typeDefs = gql`
     message: String
   }
 
+  type Post {
+    name: String
+    author: Author
+  }
+
+  type Author {
+    name: String
+    posts: [Post]
+  }
+
   type Query {
     books: [Book]
     booksWithContacts: [Book]
     token(clientId: String): String
     secrets(STARTS_WITH: String): [Secret]
+    posts: [Post]
   }
 `;
 
@@ -107,6 +131,19 @@ const resolvers = {
         return await getSecrets(
           makeScopedQuery({ message: { $regex: STARTS_WITH } }, clientId)
         );
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
+    posts: async (parent, args, context, info) => {
+      try {
+        const { fieldNodes } = info;
+        const selectionDepth = getSelectionDepth(fieldNodes)[0];
+
+        if (selectionDepth > 5) {
+          throw new Error('Max selection depth exceeded');
+        }
+        return [];
       } catch (err) {
         throw new Error(err);
       }

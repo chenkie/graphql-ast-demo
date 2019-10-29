@@ -2,6 +2,8 @@
 
 This sample project demonstrates how to use a GraphQL Abstract Syntax Tree (AST) to help you make more efficient database queries. It uses a MongoDB database for demonstration purposes but the same principles can be mapped to whichever database you are using.
 
+**THIS CODE IS NOT PRODUCTION-READY**
+
 ## Installation
 
 Make sure you have MongoDB installed on your machine. Read the [MongoDB docs](https://docs.mongodb.com/manual/installation/) for more information on how to do that.
