@@ -2,7 +2,7 @@
 
 This sample project demonstrates how to use a GraphQL Abstract Syntax Tree (AST) to help you make more efficient database queries. It uses a MongoDB database for demonstration purposes but the same principles can be mapped to whichever database you are using.
 
-**THIS CODE IS NOT PRODUCTION-READY**
+### **WARNING: THIS CODE IS NOT PRODUCTION-READY!**
 
 ## Installation
 
@@ -13,6 +13,8 @@ Install the dependencies:
 ```bash
 npm install
 ```
+
+Rename the `.env.example` file to `.env` and provide a value for the `JWT_SECRET`. For playing around with this demo, set it to whatever you like. However, in the real world, this value should be a super strong key.
 
 Run in development mode for live reloading:
 
