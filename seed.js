@@ -1,19 +1,33 @@
 const faker = require('faker');
 
 const Book = require('./db/model/Book');
+const User = require('./db/model/User');
 const Contact = require('./db/model/Contact');
 const Secret = require('./db/model/Secret');
 
 const books = [
   {
     title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling'
+    author: 'J.K. Rowling',
+    publishDate: '1998-07-02'
   },
   {
     title: 'Jurassic Park',
-    author: 'Michael Crichton'
+    author: 'Michael Crichton',
+    publishDate: '1990-11-20'
   }
 ];
+
+const makeUsers = num => {
+  const users = [];
+  for (let i = 0; i < num; i++) {
+    users.push({
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName()
+    });
+  }
+  return users;
+};
 
 const makeContacts = num => {
   const contacts = [];
@@ -51,6 +65,7 @@ const clearData = async () => {
   try {
     return await Promise.all([
       Book.deleteMany(),
+      User.deleteMany(),
       Contact.deleteMany(),
       Secret.deleteMany()
     ]);
@@ -63,6 +78,7 @@ const seedData = async () => {
   try {
     return await Promise.all([
       Book.insertMany(books),
+      User.insertMany(makeUsers(10)),
       Contact.insertMany(makeContacts(100)),
       Secret.insertMany(makeSecrets(100))
     ]);

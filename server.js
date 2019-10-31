@@ -6,7 +6,7 @@ mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
 
 const {
   getBooks,
-  getBooksWithContacts,
+  getUsersWithContacts,
   signToken,
   getSecrets
 } = require('./db/queries');
@@ -21,14 +21,13 @@ const getQuerySelections = ({ fieldNodes }) => {
 };
 
 const getQuerySubArguments = ({ fieldNodes }) => {
-  const args = fieldNodes
+  return fieldNodes
     .map(node => node.selectionSet.selections)
     .flat()
     .filter(s => s.arguments && s.arguments.length)
     .map(s => s.arguments)
     .flat()
     .filter(a => a.kind === 'Argument');
-  return args;
 };
 
 const getLimit = rawArgs => {
@@ -62,6 +61,12 @@ const typeDefs = gql`
   type Book {
     title: String
     author: String
+    publishDate: String
+  }
+
+  type User {
+    firstName: String
+    lastName: String
     contacts(LIMIT: Int, SORT_BY: String): [Contact]
   }
 
@@ -95,7 +100,7 @@ const typeDefs = gql`
 
   type Query {
     books: [Book]
-    booksWithContacts: [Book]
+    usersWithContacts: [User]
     token(clientId: String): String
     secrets(STARTS_WITH: String): [Secret]
     posts: [Post]
@@ -112,13 +117,13 @@ const resolvers = {
         throw new Error(err);
       }
     },
-    booksWithContacts: async (parent, args, context, info) => {
+    usersWithContacts: async (parent, args, context, info) => {
       try {
         const selections = getQuerySelections(info);
         const subArguments = getQuerySubArguments(info);
         const limit = getLimit(subArguments);
         const sortBy = getSortBy(subArguments);
-        return await getBooksWithContacts(selections, limit, sortBy);
+        return await getUsersWithContacts(selections, limit, sortBy);
       } catch (err) {
         throw new Error(err);
       }

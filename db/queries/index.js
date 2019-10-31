@@ -1,4 +1,5 @@
 const Book = require('./../model/Book');
+const User = require('./../model/User');
 const Contact = require('./../model/Contact');
 const Secret = require('./../model/Secret');
 const jwt = require('jsonwebtoken');
@@ -17,20 +18,15 @@ const getBooks = async selections => {
   }
 };
 
-const getBooksWithContacts = async (selections, limit, sortBy) => {
+const getUsersWithContacts = async (selections, limit, sortBy) => {
   try {
-    const books = await Book.find().select(selections);
-    for (let book of books) {
-      book.contacts = await Contact.find()
+    const users = await User.find().select(selections);
+    for (let user of users) {
+      user.contacts = await Contact.find()
         .limit(limit)
         .sort(sortBy);
     }
-
-    // The results coming from the database will
-    // be scoped to whatever selection was made
-    // from the GraphQL query itself
-    console.log(books);
-    return books;
+    return users;
   } catch (err) {
     throw new Error(err);
   }
@@ -46,4 +42,9 @@ const getSecrets = async scopedQuery => {
   }
 };
 
-module.exports = { getBooks, getBooksWithContacts, signToken, getSecrets };
+module.exports = {
+  getBooks,
+  getUsersWithContacts,
+  signToken,
+  getSecrets
+};
